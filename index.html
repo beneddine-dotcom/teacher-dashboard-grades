@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>برنامج إدراج الملاحظات</title>
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    direction: rtl;
+    background: linear-gradient(135deg, #e8edf5 0%, #d5dce6 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* ===== HEADER ===== */
+.header {
+    background: linear-gradient(135deg, #0b1d3a, #1a3268, #2a4a8a);
+    color: #fff;
+    padding: 25px 30px 20px;
+    text-align: center;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(11, 29, 58, 0.4);
+    margin-bottom: 22px;
+    position: relative;
+    overflow: hidden;
+}
+.header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 50%, rgba(240, 200, 66, 0.08) 0%, transparent 60%);
+    animation: rotateGlow 20s linear infinite;
+}
+@keyframes rotateGlow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #f0c842, #ffd700, #f0c842, #ffed4a);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmerText 4s ease-in-out infinite;
+    position: relative;
+    z-index: 1;
+}
+@keyframes shimmerText {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+.header .subtitle {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.75);
+    margin-top: 6px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== معلومات المؤسسة ===== */
+.school-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 2px solid rgba(255, 255, 255, 0.15);
+    position: relative;
+    z-index: 1;
+}
+.school-info .info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 8px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s;
+}
+.school-info .info-item:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+}
+.school-info .info-item label {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.school-info .info-item input,
+.school-info .info-item select {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 6px 14px;
+    color: #f0c842;
+    font-size: 0.9rem;
+    text-align: center;
+    width: 100%;
+    max-width: 220px;
+    outline: none;
+    transition: all 0.3s;
+    font-weight: 600;
+}
+.school-info .info-item input:focus,
+.school-info .info-item select:focus {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #f0c842;
+    box-shadow: 0 0 0 4px rgba(240, 200, 66, 0.15);
+}
+.school-info .info-item input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+.school-info .info-item select option {
+    color: #333;
+    background: #fff;
+}
+.school-info .info-item .icon {
+    font-size: 1.2rem;
+}
+
+/* ===== TOOLBAR ===== */
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 12px 18px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 14px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s;
+}
+.toolbar:hover {
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
+}
+.tb-label {
+    font-size: 12px;
+    color: #555;
+    white-space: nowrap;
+    font-weight: 600;
+}
+select {
+    font-size: 12.5px;
+    padding: 6px 14px;
+    border-radius: 10px;
+    border: 2px solid #e0e4ea;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+select:focus {
+    border-color: #f0c842;
+    box-shadow: 0 0 0 4px rgba(240, 200, 66, 0.2);
+}
+select:hover {
+    border-color: #c9a227;
+}
+.tb-btn {
+    font-size: 12px;
+    padding: 6px 18px;
+    border-radius: 10px;
+    border: 2px solid #e0e4ea;
+    background: #fff;
+    color: #444;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.25s cubic-bezier(.4,0,.2,1);
+    font-weight: 600;
+}
+.tb-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+.tb-btn:active {
+    transform: scale(0.95);
+}
+.tb-btn.primary {
+    background: linear-gradient(135deg, #0b1d3a, #1a3268);
+    color: #f0c842;
+    border-color: #0b1d3a;
+}
+.tb-btn.primary:hover {
+    background: linear-gradient(135deg, #1a3268, #2a4a8a);
+    box-shadow: 0 4px 20px rgba(11, 29, 58, 0.3);
+}
+.tb-btn.danger:hover {
+    background: #fff0f0;
+    border-color: #c0392b;
+    color: #c0392b;
+}
+.tb-btn.print {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    color: #fff;
+    border-color: #27ae60;
+}
+.tb-btn.print:hover {
+    background: linear-gradient(135deg, #219150, #27ae60);
+    box-shadow: 0 4px 20px rgba(39, 174, 96, 0.3);
+}
+.tb-btn.success {
+    background: linear-gradient(135deg, #2980b9, #3498db);
+    color: #fff;
+    border-color: #2980b9;
+}
+.tb-btn.success:hover {
+    background: linear-gradient(135deg, #1a6fa0, #2980b9);
+    box-shadow: 0 4px 20px rgba(41, 128, 185, 0.3);
+}
+
+/* ===== MAIN ===== */
+.main {
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+/* ===== SHEET ===== */
+.sheet-wrap {
+    overflow: auto;
+    border-radius: 14px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+    background: #fff;
+    max-height: 520px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+table.grid {
+    border-collapse: collapse;
+    min-width: 100%;
+    font-size: 13px;
+}
+table.grid thead th {
+    background: linear-gradient(135deg, #f0f2f5, #e8ecf1);
+    color: #2c3e50;
+    font-weight: 700;
+    padding: 10px 12px;
+    text-align: center;
+    font-size: 11.5px;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    border-bottom: 3px solid #d5dce6;
+    border-right: 1px solid #e8eaed;
+    transition: background 0.3s;
+}
+table.grid thead th:hover {
+    background: linear-gradient(135deg, #e8ecf1, #dce2ea);
+}
+th.rnh {
+    position: sticky;
+    right: 0;
+    top: 0;
+    z-index: 3;
+    background: #e8ecf1;
+    min-width: 35px;
+    width: 35px;
+}
+td.rn {
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    background: #f8f9fa;
+    color: #999;
+    text-align: center;
+    font-size: 11px;
+    padding: 0 4px;
+    border-right: 2px solid #dde1e7;
+    min-width: 35px;
+    width: 35px;
+    font-weight: 600;
+}
+table.grid tbody tr {
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.2s;
+}
+table.grid tbody tr:hover {
+    background: rgba(240, 200, 66, 0.06);
+    transform: scale(1.001);
+}
+table.grid tbody tr:nth-child(even) {
+    background: #fafbfc;
+}
+table.grid tbody tr:nth-child(even):hover {
+    background: rgba(240, 200, 66, 0.08);
+}
+table.grid td {
+    border-right: 1px solid #eef0f4;
+    padding: 0;
+}
+
+td.ec {
+    padding: 0;
+    transition: all 0.2s;
+}
+td.ec input[type=number] {
+    width: 100%;
+    height: 100%;
+    min-height: 34px;
+    padding: 4px 6px;
+    border: none;
+    background: transparent;
+    color: #222;
+    font-size: 13px;
+    text-align: center;
+    outline: none;
+    font-family: inherit;
+    transition: all 0.25s;
+    border-radius: 4px;
+}
+td.ec input[type=number]:hover {
+    background: rgba(240, 200, 66, 0.05);
+}
+td.ec input[type=number]:focus {
+    background: rgba(240, 200, 66, 0.12);
+    color: #1a3268;
+    box-shadow: inset 0 0 0 2px rgba(240, 200, 66, 0.3);
+}
+td.ec input[type=number]::-webkit-inner-spin-button,
+td.ec input[type=number]::-webkit-outer-spin-button {
+    opacity: 0.4;
+}
+
+td.nc {
+    padding: 0;
+}
+td.nc input[type=text] {
+    width: 100%;
+    min-height: 34px;
+    padding: 4px 8px;
+    border: none;
+    background: transparent;
+    color: #333;
+    font-size: 12px;
+    outline: none;
+    font-family: inherit;
+    direction: rtl;
+    transition: all 0.25s;
+    border-radius: 4px;
+}
+td.nc input[type=text]:hover {
+    background: rgba(240, 200, 66, 0.04);
+}
+td.nc input[type=text]:focus {
+    background: rgba(240, 200, 66, 0.08);
+    box-shadow: inset 0 0 0 2px rgba(240, 200, 66, 0.2);
+}
+
+td.cv {
+    padding: 4px 8px;
+    text-align: center;
+    white-space: nowrap;
+}
+.avg-val {
+    font-weight: 700;
+    font-size: 13px;
+}
+.avg-val.avg6 { color: #27ae60; }
+.avg-val.avg5 { color: #6c3483; }
+.avg-val.avg4 { color: #2980b9; }
+.avg-val.avg3 { color: #16a085; }
+.avg-val.avg2 { color: #c9a227; }
+.avg-val.avg1 { color: #e67e22; }
+.avg-val.avg0 { color: #c0392b; }
+
+.pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+    border: 2px solid;
+    transition: all 0.3s;
+}
+.pill:hover {
+    transform: scale(1.05);
+}
+
+/* ===== ألوان خفيفة وباهية ===== */
+.pill.g0 { background: #fef0f0; color: #8b1a1a; border-color: #f5a5a5; }
+.pill.g1 { background: #fef5e8; color: #7a3a0a; border-color: #f5cba0; }
+.pill.g2 { background: #fef9e0; color: #7a5a0a; border-color: #f5e08a; }
+.pill.g3 { background: #e8f8f2; color: #0a6a4a; border-color: #8ad4b8; }
+.pill.g4 { background: #e8f2fa; color: #0a4a7a; border-color: #8ab8e8; }
+.pill.g5 { background: #f0e8f8; color: #4a1a7a; border-color: #c8a8e8; }
+.pill.g6 { background: #e8f8e0; color: #1a6a0a; border-color: #90d870; }
+
+/* ===== ألوان الأعمدة ===== */
+.col-eval { background: #d4e6f1 !important; border-color: #85c1e9 !important; }
+.col-exam { background: #fdebd0 !important; border-color: #f5b041 !important; }
+.col-test { background: #d5f5e3 !important; border-color: #58d68d !important; }
+.col-avg { background: #fcf3cf !important; border-color: #f4d03f !important; }
+.col-grade { background: #e8daef !important; border-color: #af7ac5 !important; }
+.col-note { background: #f2f3f4 !important; border-color: #bdc3c7 !important; }
+
+.note-td {
+    font-size: 10px;
+    padding: 4px 8px;
+    color: #555;
+    max-width: 160px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
+.add-row-btn {
+    width: 100%;
+    margin-top: 8px;
+    font-size: 12px;
+    padding: 8px;
+    border: 2px dashed #d5dce6;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.6);
+    color: #888;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+}
+.add-row-btn:hover {
+    background: rgba(240, 200, 66, 0.08);
+    border-color: #f0c842;
+    color: #1a3268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(240, 200, 66, 0.15);
+}
+
+/* ===== STATS ===== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+}
+.stat-card {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.4s cubic-bezier(.4,0,.2,1);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #f0c842, #ffd700);
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+.stat-card:hover::before {
+    opacity: 1;
+}
+.stat-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 12px 45px rgba(0, 0, 0, 0.12);
+    border-color: #f0c842;
+}
+.stat-card .stat-val {
+    font-size: 28px;
+    font-weight: 800;
+    color: #0b1d3a;
+    line-height: 1.1;
+    transition: all 0.3s;
+}
+.stat-card .stat-val.avg6 { color: #27ae60; }
+.stat-card .stat-val.avg5 { color: #6c3483; }
+.stat-card .stat-val.avg4 { color: #2980b9; }
+.stat-card .stat-val.avg3 { color: #16a085; }
+.stat-card .stat-val.avg2 { color: #c9a227; }
+.stat-card .stat-val.avg1 { color: #e67e22; }
+.stat-card .stat-val.avg0 { color: #c0392b; }
+.stat-card .stat-lbl {
+    font-size: 11px;
+    color: #888;
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+/* ===== DISTRIBUTION ===== */
+.dist-panel {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(8px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-top: 14px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s;
+}
+.dist-panel:hover {
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+}
+.dist-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 12px;
+}
+.dist-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 7px;
+    transition: all 0.3s;
+}
+.dist-row:hover {
+    transform: translateX(-4px);
+}
+.dist-lbl {
+    font-size: 11.5px;
+    color: #444;
+    width: 150px;
+    text-align: right;
+    flex-shrink: 0;
+    font-weight: 600;
+}
+.dist-track {
+    flex: 1;
+    height: 16px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+}
+.dist-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.9s cubic-bezier(.4,0,.2,1);
+}
+.dist-cnt {
+    font-size: 11px;
+    color: #666;
+    width: 28px;
+    text-align: left;
+    flex-shrink: 0;
+    font-weight: 700;
+}
+
+/* ===== CHARTS ===== */
+.charts-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+}
+.chart-box {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(8px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.4s;
+}
+.chart-box:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 35px rgba(0, 0, 0, 0.1);
+    border-color: #f0c842;
+}
+.chart-box h4 {
+    font-size: 13px;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: 700;
+}
+.chart-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.chart-container canvas {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+}
+.boxplot-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90px;
+}
+.boxplot-container svg {
+    width: 100%;
+    max-width: 400px;
+    height: 100px;
+    background: #fafafa;
+    border-radius: 8px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);
+}
+
+/* ===== MODAL ===== */
+.modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+.modal-bg.open {
+    display: flex;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+.modal {
+    background: #fff;
+    border-radius: 18px;
+    padding: 28px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.35s cubic-bezier(.4,0,.2,1);
+}
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.modal h3 {
+    font-size: 1.1rem;
+    color: #0b1d3a;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+.modal p {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 12px;
+    line-height: 1.7;
+}
+.modal textarea {
+    width: 100%;
+    height: 160px;
+    padding: 12px;
+    border: 2px solid #e0e4ea;
+    border-radius: 10px;
+    font-size: 12.5px;
+    resize: vertical;
+    direction: ltr;
+    outline: none;
+    font-family: 'Consolas', 'Monaco', monospace;
+    transition: all 0.3s;
+}
+.modal textarea:focus {
+    border-color: #f0c842;
+    box-shadow: 0 0 0 4px rgba(240, 200, 66, 0.15);
+}
+.modal-btns {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    justify-content: flex-end;
+}
+
+/* ===== PRINT STYLES - محسنة ===== */
+@media print {
+    /* إعادة تعيين الخلفية */
+    body {
+        background: #fff !important;
+        padding: 8px !important;
+        margin: 0 !important;
+    }
+    
+    /* الهيدر للطباعة */
+    .header {
+        background: #0b1d3a !important;
+        border-radius: 8px !important;
+        box-shadow: none !important;
+        padding: 15px 20px !important;
+        margin-bottom: 12px !important;
+        -webkit-text-fill-color: unset !important;
+        color: #f0c842 !important;
+        border: 1px solid #0b1d3a !important;
+    }
+    .header h1 {
+        -webkit-text-fill-color: #f0c842 !important;
+        color: #f0c842 !important;
+        animation: none !important;
+        font-size: 1.6rem !important;
+    }
+    .header .subtitle {
+        color: rgba(255, 255, 255, 0.7) !important;
+        font-size: 0.8rem !important;
+    }
+    .header::before { display: none !important; }
+    
+    /* معلومات المؤسسة في الطباعة */
+    .school-info {
+        border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+        gap: 8px !important;
+        margin-top: 10px !important;
+        padding-top: 10px !important;
+    }
+    .school-info .info-item {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        padding: 4px 10px !important;
+        border-radius: 6px !important;
+    }
+    .school-info .info-item label {
+        color: rgba(255, 255, 255, 0.4) !important;
+        font-size: 0.6rem !important;
+    }
+    .school-info .info-item input,
+    .school-info .info-item select {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        color: #f0c842 !important;
+        font-size: 0.8rem !important;
+        padding: 3px 10px !important;
+        -webkit-text-fill-color: #f0c842 !important;
+    }
+    .school-info .info-item select option {
+        color: #333 !important;
+        background: #fff !important;
+    }
+    
+    /* إخفاء عناصر التحكم */
+    .toolbar { display: none !important; }
+    .add-row-btn { display: none !important; }
+    .modal-bg { display: none !important; }
+    .no-print { display: none !important; }
+    
+    /* الجدول */
+    .sheet-wrap {
+        max-height: none !important;
+        overflow: visible !important;
+        border-radius: 6px !important;
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+    table.grid {
+        font-size: 10px !important;
+        border-collapse: collapse !important;
+        width: 100% !important;
+    }
+    table.grid thead th {
+        background: #e8ecf1 !important;
+        position: static !important;
+        border-bottom: 2px solid #ccc !important;
+        padding: 5px 6px !important;
+        font-size: 9px !important;
+        color: #333 !important;
+    }
+    table.grid thead th,
+    table.grid td {
+        border: 1px solid #ccc !important;
+    }
+    th.rnh { 
+        position: static !important;
+        min-width: 25px !important;
+        width: 25px !important;
+    }
+    td.rn {
+        position: static !important;
+        min-width: 25px !important;
+        width: 25px !important;
+        background: #f5f5f5 !important;
+        font-size: 9px !important;
+    }
+    table.grid tbody tr {
+        border-bottom: 1px solid #e0e0e0 !important;
+    }
+    table.grid tbody tr:nth-child(even) {
+        background: #fafafa !important;
+    }
+    
+    /* تقليل عرض الأعمدة */
+    table.grid thead th {
+        font-size: 8.5px !important;
+        padding: 4px 5px !important;
+    }
+    table.grid td {
+        padding: 2px 4px !important;
+        font-size: 9px !important;
+    }
+    td.ec input[type=number] {
+        min-height: 20px !important;
+        font-size: 9px !important;
+        padding: 1px 3px !important;
+    }
+    td.nc input[type=text] {
+        min-height: 20px !important;
+        font-size: 9px !important;
+        padding: 1px 4px !important;
+    }
+    .note-td {
+        font-size: 8px !important;
+        padding: 2px 4px !important;
+        max-width: 100px !important;
+    }
+    .pill {
+        font-size: 8px !important;
+        padding: 1px 6px !important;
+    }
+    .avg-val {
+        font-size: 10px !important;
+    }
+    
+    /* عرض ألوان الأعمدة في الطباعة */
+    .col-eval { background: #d4e6f1 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .col-exam { background: #fdebd0 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .col-test { background: #d5f5e3 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .col-avg { background: #fcf3cf !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .col-grade { background: #e8daef !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .col-note { background: #f2f3f4 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    
+    /* الحفاظ على ألوان التقديرات */
+    .pill.g0 { background: #fef0f0 !important; border-color: #f5a5a5 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .pill.g1 { background: #fef5e8 !important; border-color: #f5cba0 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .pill.g2 { background: #fef9e0 !important; border-color: #f5e08a !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .pill.g3 { background: #e8f8f2 !important; border-color: #8ad4b8 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .pill.g4 { background: #e8f2fa !important; border-color: #8ab8e8 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .pill.g5 { background: #f0e8f8 !important; border-color: #c8a8e8 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .pill.g6 { background: #e8f8e0 !important; border-color: #90d870 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    
+    /* الإحصائيات */
+    .stats-grid {
+        break-inside: avoid !important;
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 6px !important;
+        margin-top: 10px !important;
+    }
+    .stat-card {
+        background: #f8f9fa !important;
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        padding: 8px 10px !important;
+        border-radius: 6px !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    .stat-card .stat-val {
+        font-size: 18px !important;
+    }
+    .stat-card .stat-lbl {
+        font-size: 8px !important;
+    }
+    
+    /* توزيع التقديرات */
+    .dist-panel {
+        break-inside: avoid !important;
+        background: #f8f9fa !important;
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        padding: 10px 14px !important;
+        margin-top: 8px !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    .dist-fill {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    /* الرسوم البيانية */
+    .charts-row {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 8px !important;
+        margin-top: 8px !important;
+    }
+    .chart-box {
+        background: #f8f9fa !important;
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        padding: 10px !important;
+        border-radius: 6px !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    .chart-box h4 {
+        font-size: 10px !important;
+        margin-bottom: 4px !important;
+    }
+    .boxplot-container svg {
+        background: #fafafa !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    .boxplot-container { break-inside: avoid !important; }
+    .main { padding: 0 !important; }
+    
+    /* زر الطباعة يظهر */
+    .tb-btn.print { 
+        display: inline-block !important;
+        background: #27ae60 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 4px 12px !important;
+        font-size: 10px !important;
+        border-radius: 4px !important;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="header no-print">
+    <h1>📊 برنامج إدراج الملاحظات</h1>
+    <p class="subtitle">التقديرات والتحليل الإحصائي التلقائي — بمجرد إدخال العلامات</p>
+    
+    <div class="school-info">
+        <div class="info-item">
+            <span class="icon">👨‍🏫</span>
+            <label>اسم الأستاذ</label>
+            <input type="text" id="teacherName" placeholder="أدخل اسم الأستاذ">
+        </div>
+        <div class="info-item">
+            <span class="icon">🏫</span>
+            <label>المؤسسة التعليمية</label>
+            <input type="text" id="schoolName" placeholder="أدخل اسم المؤسسة">
+        </div>
+        <div class="info-item">
+            <span class="icon">📚</span>
+            <label>الفصل الدراسي</label>
+            <select id="semesterSelect">
+                <option value="1">الفصل الأول</option>
+                <option value="2" selected>الفصل الثاني</option>
+                <option value="3">الفصل الثالث</option>
+            </select>
+        </div>
+        <div class="info-item">
+            <span class="icon">📅</span>
+            <label>التاريخ</label>
+            <input type="date" id="datePicker">
+        </div>
+    </div>
+</div>
+
+<div class="main">
+
+    <div class="toolbar no-print">
+        <span class="tb-label">📋 الصيغة:</span>
+        <select id="formulaSelect" onchange="rebuildHeaders()">
+            <option value="std">تقييم + فروض + اختبار</option>
+            <option value="oral">تقييم + أعمال تطبيقية + فروض + اختبار</option>
+        </select>
+        <button class="tb-btn primary" onclick="openPaste()">📋 لصق بيانات</button>
+        <button class="tb-btn" onclick="addRows(5)">➕ 5 صفوف</button>
+        <button class="tb-btn" onclick="addRows(10)">➕ 10 صفوف</button>
+        <button class="tb-btn success" onclick="copyAll()">📤 نسخ النتائج</button>
+        <button class="tb-btn print" onclick="window.print()">🖨️ طباعة</button>
+        <button class="tb-btn danger" onclick="clearAll()">🗑️ مسح الكل</button>
+    </div>
+
+    <div class="sheet-wrap" id="sheetWrap">
+        <table class="grid" id="mainGrid">
+            <thead id="gridHead"></thead>
+            <tbody id="gridBody"></tbody>
+        </table>
+    </div>
+    <button class="add-row-btn no-print" onclick="addRows(1)">＋ إضافة صف جديد</button>
+
+    <div class="stats-grid" id="statsPanel"></div>
+
+    <div class="dist-panel" id="distBar" style="display:none"></div>
+
+    <div class="charts-row" id="chartsRow" style="display:none">
+        <div class="chart-box">
+            <h4>📊 الأعمدة البيانية</h4>
+            <div class="chart-container"><canvas id="barChart" width="300" height="180"></canvas></div>
+        </div>
+        <div class="chart-box">
+            <h4>🧩 نسب الدائرة</h4>
+            <div class="chart-container"><canvas id="pieChart" width="300" height="180"></canvas></div>
+        </div>
+        <div class="chart-box">
+            <h4>📦 مخطط الصندوق</h4>
+            <div class="boxplot-container" id="boxplotContainer"><svg viewBox="0 0 400 80" id="boxplotSvg"></svg></div>
+        </div>
+    </div>
+</div>
+
+<!-- PASTE MODAL -->
+<div class="modal-bg" id="modalBg" onclick="closePasteIfBg(event)">
+    <div class="modal">
+        <h3>📋 لصق بيانات من Excel</h3>
+        <p>
+            الصق البيانات مباشرة من Excel أو Google Sheets.<br>
+            الصيغة المقبولة (مفصولة بـ Tab أو فاصلة أو فاصلة منقوطة):<br>
+            <b>صيغة أ:</b> اسم&nbsp;&nbsp;تقييم&nbsp;&nbsp;فروض&nbsp;&nbsp;اختبار<br>
+            <b>صيغة ب:</b> اسم&nbsp;&nbsp;تقييم&nbsp;&nbsp;أعمال&nbsp;&nbsp;فروض&nbsp;&nbsp;اختبار<br>
+            <span style="color:#c0392b;">💡 يمكنك لصق العلامات فقط بدون أسماء</span>
+        </p>
+        <textarea id="pasteArea" placeholder="13&#9;11.5&#9;6&#10;18&#9;16.5&#9;20&#10;أحمد&#9;15&#9;13&#9;8"></textarea>
+        <div class="modal-btns">
+            <button class="tb-btn danger" onclick="closePaste()">إلغاء</button>
+            <button class="tb-btn primary" onclick="doPaste()">تطبيق</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===== CONSTANTS =====
+const GRADES = [
+    {min: 0, max: 7, label: 'نتائج غير مقبولة', note: 'يحتاج إلى مراجعة شاملة', cls: 'g0', avg: 'avg0', fill: '#e74c3c'},
+    {min: 7, max: 10, label: 'دون المتوسط', note: 'ينقصك الحرص والتركيز', cls: 'g1', avg: 'avg1', fill: '#e67e22'},
+    {min: 10, max: 12, label: 'مقبول', note: 'بمقدورك تحقيق نتائج أفضل', cls: 'g2', avg: 'avg2', fill: '#c9a227'},
+    {min: 12, max: 14, label: 'مرضي', note: 'بإمكانك تحسينها', cls: 'g3', avg: 'avg3', fill: '#16a085'},
+    {min: 14, max: 15, label: 'جيد', note: 'واصل الاجتهاد والمثابرة', cls: 'g4', avg: 'avg4', fill: '#2980b9'},
+    {min: 15, max: 17, label: 'جيد جداً', note: 'واصل التألق والثبات', cls: 'g5', avg: 'avg5', fill: '#6c3483'},
+    {min: 17, max: 20.1, label: 'ممتاز', note: 'نتائج ممتازة، واصل', cls: 'g6', avg: 'avg6', fill: '#27ae60'},
+];
+
+function getGrade(a) {
+    if (a === null || isNaN(a)) return null;
+    return GRADES.find(g => a >= g.min && a < g.max) || GRADES[6];
+}
+
+// ===== STATE =====
+let rows = [], nextId = 0;
+
+// ===== DATE =====
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('datePicker').value = today;
+});
+
+// ===== CALCULATIONS =====
+function calcAvg(r) {
+    const f = document.getElementById('formulaSelect').value;
+    if (f === 'std') {
+        if ([r.c1, r.c3, r.c4].some(x => x === '' || x === undefined || x === null)) return null;
+        const v = [Number(r.c1), Number(r.c3), Number(r.c4)];
+        if (v.some(isNaN)) return null;
+        return Math.round(((v[0] + v[1] + v[2] * 2) / 4) * 1000) / 1000;
+    } else {
+        if ([r.c1, r.c2, r.c3, r.c4].some(x => x === '' || x === undefined || x === null)) return null;
+        const v = [Number(r.c1), Number(r.c2), Number(r.c3), Number(r.c4)];
+        if (v.some(isNaN)) return null;
+        return Math.round(((v[0] + v[1] + v[2] + v[3] * 2) / 5) * 1000) / 1000;
+    }
+}
+
+// ===== RENDER =====
+function rebuildHeaders() {
+    const f = document.getElementById('formulaSelect').value;
+    const h = document.getElementById('gridHead');
+    if (f === 'std') {
+        h.innerHTML = `<tr>
+            <th class="rnh">#</th>
+            <th style="min-width:100px;text-align:right;width:100px;">👤 اسم التلميذ</th>
+            <th style="min-width:65px;width:65px;background:#d4e6f1;">📝 تقييم</th>
+            <th style="min-width:65px;width:65px;background:#fdebd0;">📖 فروض</th>
+            <th style="min-width:65px;width:65px;background:#d5f5e3;">📄 اختبار</th>
+            <th style="min-width:60px;width:60px;background:#fcf3cf;">🏆 المعدل</th>
+            <th style="min-width:90px;width:90px;background:#e8daef;">⭐ التقدير</th>
+            <th style="min-width:130px;width:130px;text-align:right;background:#f2f3f4;">💡 الملاحظة</th>
+        </tr>`;
+    } else {
+        h.innerHTML = `<tr>
+            <th class="rnh">#</th>
+            <th style="min-width:100px;text-align:right;width:100px;">👤 اسم التلميذ</th>
+            <th style="min-width:65px;width:65px;background:#d4e6f1;">📝 تقييم</th>
+            <th style="min-width:65px;width:65px;background:#fdebd0;">📐 أعمال</th>
+            <th style="min-width:65px;width:65px;background:#d5f5e3;">📖 فروض</th>
+            <th style="min-width:65px;width:65px;background:#fcf3cf;">📄 اختبار</th>
+            <th style="min-width:60px;width:60px;background:#fcf3cf;">🏆 المعدل</th>
+            <th style="min-width:90px;width:90px;background:#e8daef;">⭐ التقدير</th>
+            <th style="min-width:130px;width:130px;text-align:right;background:#f2f3f4;">💡 الملاحظة</th>
+        </tr>`;
+    }
+    rebuildBody();
+}
+
+function rebuildBody() {
+    const body = document.getElementById('gridBody');
+    body.innerHTML = '';
+    rows.forEach((r, i) => body.appendChild(makeTR(r, i)));
+    updateStats();
+}
+
+function makeTR(r, idx) {
+    const f = document.getElementById('formulaSelect').value;
+    const avg = calcAvg(r);
+    const g = getGrade(avg);
+    const tr = document.createElement('tr');
+    tr.id = 'tr_' + r.id;
+    let h = `<td class="rn">${idx + 1}</td>`;
+    h += `<td class="nc"><input type="text" value="${esc(r.name)}" placeholder="اسم التلميذ" data-id="${r.id}" data-f="name" oninput="upd(this)"></td>`;
+    h += eCell(r.id, 'c1', r.c1, 'col-eval');
+    if (f === 'oral') h += eCell(r.id, 'c2', r.c2, 'col-exam');
+    h += eCell(r.id, 'c3', r.c3, 'col-exam');
+    h += eCell(r.id, 'c4', r.c4, 'col-test');
+    if (avg !== null) {
+        h += `<td class="cv col-avg"><span class="avg-val ${g ? g.avg : ''}">${avg.toFixed(2)}</span></td>`;
+        h += `<td class="cv col-grade"><span class="pill ${g ? g.cls : ''}">${g ? g.label : '—'}</span></td>`;
+        h += `<td class="note-td col-note" title="${g ? g.note : ''}">${g ? g.note : ''}</td>`;
+    } else {
+        h += `<td class="cv col-avg" style="color:#bbb">—</td><td class="cv col-grade" style="color:#bbb">—</td><td class="note-td col-note"></td>`;
+    }
+    tr.innerHTML = h;
+    return tr;
+}
+
+function eCell(id, field, val, cls) {
+    return `<td class="ec ${cls}"><input type="number" min="0" max="20" step="0.25" value="${val}" placeholder="—" data-id="${id}" data-f="${field}" oninput="upd(this)" onkeydown="nav(event,this)"></td>`;
+}
+
+function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+// ===== INTERACTIONS =====
+function upd(el) {
+    const r = rows.find(x => x.id === parseInt(el.dataset.id));
+    if (!r) return;
+    r[el.dataset.f] = el.value;
+    refreshRow(r);
+    updateStats();
+}
+
+function refreshRow(r) {
+    const f = document.getElementById('formulaSelect').value;
+    const avg = calcAvg(r);
+    const g = getGrade(avg);
+    const tr = document.getElementById('tr_' + r.id);
+    if (!tr) return;
+    const tds = tr.querySelectorAll('td');
+    const off = (f === 'oral') ? 6 : 5;
+    if (avg !== null) {
+        tds[off].innerHTML = `<span class="avg-val ${g ? g.avg : ''}">${avg.toFixed(2)}</span>`;
+        tds[off + 1].innerHTML = `<span class="pill ${g ? g.cls : ''}">${g ? g.label : '—'}</span>`;
+        tds[off + 2].textContent = g ? g.note : '';
+        tds[off + 2].title = g ? g.note : '';
+    } else {
+        tds[off].innerHTML = '<span style="color:#bbb">—</span>';
+        tds[off + 1].innerHTML = '<span style="color:#bbb">—</span>';
+        tds[off + 2].textContent = '';
+        tds[off + 2].title = '';
+    }
+}
+
+function nav(e, el) {
+    if (e.key === 'Enter' || e.key === 'Tab') {
+        e.preventDefault();
+        const all = Array.from(document.querySelectorAll('#mainGrid input[type=number]'));
+        const i = all.indexOf(el);
+        if (i < all.length - 1) { all[i + 1].focus(); } else {
+            addRows(1);
+            setTimeout(() => { const n = document.querySelectorAll('#mainGrid input[type=number]'); n[all.length] && n[all.length].focus(); }, 60);
+        }
+    }
+}
+
+function addRows(n) {
+    for (let i = 0; i < n; i++) rows.push({ id: nextId++, name: '', c1: '', c2: '', c3: '', c4: '' });
+    rebuildBody();
+}
+
+function clearAll() {
+    if (rows.length && !confirm('⚠️ هل تريد مسح كل البيانات؟')) return;
+    rows = [];
+    nextId = 0;
+    addRows(15);
+}
+
+// ===== STATISTICS =====
+function updateStats() {
+    const avgs = rows.map(r => calcAvg(r)).filter(a => a !== null);
+    const panel = document.getElementById('statsPanel');
+    const chartsRow = document.getElementById('chartsRow');
+    const distBar = document.getElementById('distBar');
+
+    if (!avgs.length) {
+        panel.innerHTML = '';
+        distBar.style.display = 'none';
+        chartsRow.style.display = 'none';
+        return;
+    }
+
+    const n = avgs.length;
+    const mean = avgs.reduce((a, b) => a + b, 0) / n;
+    const pass = avgs.filter(a => a >= 10).length;
+    const max = Math.max(...avgs);
+    const min = Math.min(...avgs);
+    const gm = getGrade(mean);
+    const variance = avgs.reduce((s, a) => { const d = a - mean; return s + d * d; }, 0) / n;
+    const stdDev = Math.sqrt(variance);
+    const excellent = avgs.filter(a => a >= 17).length;
+    const failed = avgs.filter(a => a < 10).length;
+
+    panel.innerHTML = `
+        <div class="stat-card"><div class="stat-val">${n}</div><div class="stat-lbl">👥 عدد التلاميذ</div></div>
+        <div class="stat-card"><div class="stat-val ${gm ? gm.avg : ''}">${mean.toFixed(2)}</div><div class="stat-lbl">📊 المتوسط العام</div></div>
+        <div class="stat-card"><div class="stat-val avg6">${max.toFixed(2)}</div><div class="stat-lbl">⬆️ أعلى معدل</div></div>
+        <div class="stat-card"><div class="stat-val avg0">${min.toFixed(2)}</div><div class="stat-lbl">⬇️ أدنى معدل</div></div>
+        <div class="stat-card"><div class="stat-val avg4">${Math.round(pass / n * 100)}%</div><div class="stat-lbl">✅ نسبة النجاح</div></div>
+        <div class="stat-card"><div class="stat-val avg6">${excellent}</div><div class="stat-lbl">🌟 ممتاز (≥17)</div></div>
+        <div class="stat-card"><div class="stat-val avg0">${failed}</div><div class="stat-lbl">❌ دون المتوسط</div></div>
+        <div class="stat-card"><div class="stat-val">${stdDev.toFixed(2)}</div><div class="stat-lbl">📐 الانحراف المعياري</div></div>
+    `;
+
+    buildDist(avgs, n);
+    drawBarChart(avgs);
+    drawPieChart(avgs);
+    drawBoxPlot(avgs);
+    chartsRow.style.display = 'grid';
+}
+
+function buildDist(avgs, total) {
+    const db = document.getElementById('distBar');
+    db.style.display = '';
+    let html = '<div class="dist-title">📊 توزيع التقديرات</div>';
+    GRADES.forEach(g => {
+        const cnt = avgs.filter(a => a >= g.min && a < g.max).length;
+        const w = total ? Math.round(cnt / total * 100) : 0;
+        html += `<div class="dist-row">
+            <span class="dist-lbl">${g.label}</span>
+            <div class="dist-track"><div class="dist-fill" style="width:${w}%;background:${g.fill};"></div></div>
+            <span class="dist-cnt">${cnt}</span>
+        </div>`;
+    });
+    db.innerHTML = html;
+}
+
+// ===== CHARTS =====
+function drawBarChart(avgs) {
+    const canvas = document.getElementById('barChart');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const sorted = avgs.slice().sort((a, b) => a - b);
+    const n = sorted.length;
+    if (n === 0) return;
+
+    const pad = 30,
+        barW = Math.min(22, (w - pad * 2) / n);
+    const maxVal = 20;
+
+    ctx.fillStyle = '#fafafa';
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = '#e8ecf1';
+    ctx.lineWidth = 0.5;
+    for (let v = 5; v <= 20; v += 5) {
+        const y = h - pad - (v / maxVal) * (h - pad * 2);
+        ctx.beginPath();
+        ctx.moveTo(pad, y);
+        ctx.lineTo(w - pad, y);
+        ctx.stroke();
+        ctx.fillStyle = '#bbb';
+        ctx.font = '9px Arial';
+        ctx.textAlign = 'right';
+        ctx.fillText(v, pad - 4, y + 3);
+    }
+
+    sorted.forEach((val, i) => {
+        const x = pad + i * (barW + 5);
+        const barH = (val / maxVal) * (h - pad * 2);
+        const y = h - pad - barH;
+
+        const g = getGrade(val);
+        const gradient = ctx.createLinearGradient(x, y, x, h - pad);
+        gradient.addColorStop(0, g ? g.fill : '#2980b9');
+        gradient.addColorStop(1, g ? g.fill + '66' : '#2980b966');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.roundRect(x, y, barW, barH, 3);
+        ctx.fill();
+
+        ctx.fillStyle = '#333';
+        ctx.font = 'bold 9px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(val.toFixed(1), x + barW / 2, y - 4);
+    });
+
+    ctx.fillStyle = '#999';
+    ctx.font = '9px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('0', pad, h - 4);
+    ctx.fillText('20', w - pad, h - 4);
+    ctx.fillText('المعدلات', w / 2, h - 4);
+}
+
+function drawPieChart(avgs) {
+    const canvas = document.getElementById('pieChart');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width,
+        h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const n = avgs.length;
+    if (n === 0) return;
+
+    const counts = GRADES.map(g => ({ ...g, count: avgs.filter(a => a >= g.min && a < g.max).length }));
+    const cx = w / 2,
+        cy = h / 2 - 10,
+        r = Math.min(w, h) / 2 - 20;
+    let start = 0;
+
+    ctx.shadowColor = 'rgba(0,0,0,0.05)';
+    ctx.shadowBlur = 10;
+
+    counts.forEach(c => {
+        if (c.count === 0) return;
+        const angle = (c.count / n) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, r, start, start + angle);
+        ctx.closePath();
+        ctx.fillStyle = c.fill;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.shadowBlur = 10;
+
+        const mid = start + angle / 2;
+        const lx = cx + Math.cos(mid) * r * 0.6;
+        const ly = cy + Math.sin(mid) * r * 0.6;
+        if (angle > 0.3) {
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 10px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowBlur = 0;
+            ctx.fillText(`${Math.round(c.count / n * 100)}%`, lx, ly);
+            ctx.shadowBlur = 10;
+        }
+        start += angle;
+    });
+
+    ctx.shadowBlur = 0;
+
+    let lx = 10,
+        ly = 10;
+    ctx.font = '9px Arial';
+    counts.forEach(c => {
+        if (c.count === 0) return;
+        ctx.fillStyle = c.fill;
+        ctx.beginPath();
+        ctx.roundRect(lx, ly, 12, 12, 2);
+        ctx.fill();
+        ctx.fillStyle = '#333';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`${c.label} (${c.count})`, lx + 16, ly + 6);
+        ly += 18;
+    });
+}
+
+function drawBoxPlot(avgs) {
+    const svg = document.getElementById('boxplotSvg');
+    const sorted = avgs.slice().sort((a, b) => a - b);
+    const n = sorted.length;
+    if (n === 0) return;
+
+    const w = 400,
+        h = 80,
+        pad = 30;
+    const minVal = 0,
+        maxVal = 20;
+
+    const q1 = sorted[Math.floor(n * 0.25)];
+    const median = sorted[Math.floor(n * 0.5)];
+    const q3 = sorted[Math.floor(n * 0.75)];
+    const min = sorted[0];
+    const max = sorted[n - 1];
+
+    const scaleX = (v) => (v - minVal) / (maxVal - minVal) * (w - pad * 2) + pad;
+
+    let html = `<svg viewBox="0 0 400 80" style="width:100%;max-width:400px;height:100px;">`;
+    html += `<rect x="0" y="0" width="400" height="80" fill="#fafafa" rx="6"/>`;
+
+    const x1 = scaleX(q1),
+        x2 = scaleX(q3),
+        yBox = 18,
+        boxH = 44;
+    html += `<rect x="${x1}" y="${yBox}" width="${x2 - x1}" height="${boxH}" fill="rgba(41,128,185,0.2)" stroke="#2980b9" stroke-width="2.5" rx="3"/>`;
+
+    const xMed = scaleX(median);
+    html += `<line x1="${xMed}" y1="${yBox}" x2="${xMed}" y2="${yBox + boxH}" stroke="#c0392b" stroke-width="3.5"/>`;
+
+    const xMin = scaleX(min),
+        xMax = scaleX(max);
+    const yMid = yBox + boxH / 2;
+    html += `<line x1="${xMin}" y1="${yMid}" x2="${x1}" y2="${yMid}" stroke="#2980b9" stroke-width="2"/>`;
+    html += `<line x1="${xMax}" y1="${yMid}" x2="${x2}" y2="${yMid}" stroke="#2980b9" stroke-width="2"/>`;
+
+    const capSize = 6;
+    html += `<line x1="${xMin}" y1="${yMid - capSize}" x2="${xMin}" y2="${yMid + capSize}" stroke="#2980b9" stroke-width="2.5"/>`;
+    html += `<line x1="${xMax}" y1="${yMid - capSize}" x2="${xMax}" y2="${yMid + capSize}" stroke="#2980b9" stroke-width="2.5"/>`;
+
+    html += `<text x="${xMin}" y="${yBox + boxH + 20}" font-size="9" fill="#666" text-anchor="middle" font-weight="bold">${min.toFixed(1)}</text>`;
+    html += `<text x="${xMed}" y="${yBox + boxH + 20}" font-size="9" fill="#666" text-anchor="middle" font-weight="bold">${median.toFixed(1)}</text>`;
+    html += `<text x="${xMax}" y="${yBox + boxH + 20}" font-size="9" fill="#666" text-anchor="middle" font-weight="bold">${max.toFixed(1)}</text>`;
+    html += `<text x="${scaleX(10)}" y="${yBox + boxH + 34}" font-size="8" fill="#999" text-anchor="middle">🎯 النجاح 10/20</text>`;
+
+    html += `<text x="${x1}" y="${yBox - 6}" font-size="8" fill="#999" text-anchor="middle">Q1</text>`;
+    html += `<text x="${x2}" y="${yBox - 6}" font-size="8" fill="#999" text-anchor="middle">Q3</text>`;
+
+    html += `<line x1="${pad}" y1="${yBox + boxH + 14}" x2="${w - pad}" y2="${yBox + boxH + 14}" stroke="#ddd" stroke-width="1"/>`;
+
+    html += `</svg>`;
+    svg.outerHTML = html;
+}
+
+// ===== COPY =====
+function copyAll() {
+    const f = document.getElementById('formulaSelect').value;
+    let txt = 'رقم\tالاسم\tالتقييم\t';
+    if (f === 'oral') txt += 'الأعمال\t';
+    txt += 'الفروض\tالاختبار\tالمعدل\tالتقدير\tالملاحظة\n';
+    rows.forEach((r, i) => {
+        const avg = calcAvg(r);
+        if (avg === null && !r.name && !r.c1 && !r.c3 && !r.c4) return;
+        const g = getGrade(avg);
+        let ln = `${i + 1}\t${r.name || ''}\t${r.c1 || ''}\t`;
+        if (f === 'oral') ln += `${r.c2 || ''}\t`;
+        ln += `${r.c3 || ''}\t${r.c4 || ''}\t${avg !== null ? avg.toFixed(2) : '—'}\t${g ? g.label : '—'}\t${g ? g.note : '—'}\n`;
+        txt += ln;
+    });
+    navigator.clipboard.writeText(txt).then(() => {
+        const b = event.target;
+        const old = b.textContent;
+        b.textContent = '✅ تم النسخ';
+        setTimeout(() => b.textContent = old, 2200);
+    }).catch(() => alert('تعذّر النسخ، تأكد من صلاحيات المتصفح'));
+}
+
+// ===== PASTE =====
+function openPaste() { document.getElementById('modalBg').classList.add('open');
+    document.getElementById('pasteArea').focus(); }
+
+function closePaste() { document.getElementById('modalBg').classList.remove('open'); }
+
+function closePasteIfBg(e) { if (e.target === document.getElementById('modalBg')) closePaste(); }
+
+function doPaste() {
+    const raw = document.getElementById('pasteArea').value.trim();
+    if (!raw) { closePaste(); return; }
+    const f = document.getElementById('formulaSelect').value;
+    const lines = raw.split('\n');
+    const added = [];
+    lines.forEach(line => {
+        if (!line.trim()) return;
+        const parts = line.trim().split(/\t|,|;/);
+        const clean = parts.map(p => p.trim());
+        const nums = clean.map(p => parseFloat(p)).map((v, i) => ({ v, i, isNum: !isNaN(v) && clean[i] !== '' }));
+        const numParts = nums.filter(x => x.isNum);
+        const textParts = clean.filter(p => isNaN(parseFloat(p)) && p !== '');
+        const r = { id: nextId++, name: textParts[0] || '', c1: '', c2: '', c3: '', c4: '' };
+        const nv = numParts.map(x => x.v);
+        if (f === 'oral') {
+            if (nv.length >= 4) { [r.c1, r.c2, r.c3, r.c4] = nv; } else if (nv.length === 3) { [r.c1, r.c3, r.c4] = nv; } else if (nv.length === 2) { [r.c3, r.c4] = nv; }
+        } else {
+            if (nv.length >= 3) { [r.c1, r.c3, r.c4] = nv; } else if (nv.length === 2) { [r.c3, r.c4] = nv; } else if (nv.length === 1) { [r.c4] = nv; }
+        }
+        added.push(r);
+    });
+    if (added.length) {
+        const blanks = rows.filter(r => !r.name && r.c1 === '' && r.c3 === '' && r.c4 === '').length;
+        if (blanks === rows.length) rows = [];
+        rows.push(...added);
+        rebuildBody();
+    }
+    document.getElementById('pasteArea').value = '';
+    closePaste();
+}
+
+// ===== INIT =====
+rebuildHeaders();
+addRows(15);
+</script>
+</body>
+</html>
